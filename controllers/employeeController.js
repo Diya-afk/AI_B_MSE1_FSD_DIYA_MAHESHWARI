@@ -13,8 +13,24 @@ exports.createEmployee = async (req, res, next) => {
 // GET ALL
 exports.getEmployees = async (req, res, next) => {
   try {
-    const employees = await Employee.find();  // find() used here
-    res.status(200).json(employees);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const skip = (page - 1) * limit;
+
+    const total = await Employee.countDocuments();
+
+    const employees = await Employee.find()
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      totalEmployees: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      employees
+    });
+
   } catch (error) {
     next(error);
   }
