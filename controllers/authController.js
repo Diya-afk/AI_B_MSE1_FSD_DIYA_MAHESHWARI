@@ -9,11 +9,10 @@ const generateToken = (id) => {
 };
 
 // REGISTER
-exports.registerUser = async (req, res, next) => {
+exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -34,12 +33,12 @@ exports.registerUser = async (req, res, next) => {
     });
 
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // LOGIN
-exports.loginUser = async (req, res, next) => {
+exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -57,6 +56,6 @@ exports.loginUser = async (req, res, next) => {
     }
 
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
