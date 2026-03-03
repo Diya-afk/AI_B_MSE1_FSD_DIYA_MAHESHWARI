@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/employeeController");
+const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", controller.createEmployee);
 router.get("/", controller.getEmployees);
