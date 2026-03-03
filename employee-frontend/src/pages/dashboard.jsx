@@ -15,6 +15,15 @@ function Dashboard() {
   const employeesPerPage = 5;
   const token = localStorage.getItem("token");
 
+  // 🔐 Protect Route
+  useEffect(() => {
+    if (!token) {
+      window.location.href = "/";
+    } else {
+      fetchEmployees();
+    }
+  }, []);
+
   const fetchEmployees = async () => {
     try {
       const { data } = await api.get("/employees?limit=50", {
@@ -26,10 +35,6 @@ function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
-
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
@@ -37,7 +42,9 @@ function Dashboard() {
         "/employees",
         {
           fullName,
-          email: `${fullName.replace(" ", "").toLowerCase()}${Date.now()}@company.com`,
+          email: `${fullName
+            .replace(" ", "")
+            .toLowerCase()}${Date.now()}@company.com`,
           phoneNumber: "9999999999",
           department,
           designation: "Employee",
@@ -47,6 +54,7 @@ function Dashboard() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setFullName("");
       setDepartment("");
       fetchEmployees();
@@ -57,6 +65,7 @@ function Dashboard() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this employee?")) return;
+
     try {
       await api.delete(`/employees/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -83,6 +92,7 @@ function Dashboard() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setEditingEmployee(null);
       fetchEmployees();
     } catch {
@@ -95,36 +105,61 @@ function Dashboard() {
     window.location.href = "/";
   };
 
+  // 🔎 Search
   const filteredEmployees = employees.filter(
     (emp) =>
       emp.fullName.toLowerCase().includes(search.toLowerCase()) ||
       emp.department.toLowerCase().includes(search.toLowerCase())
   );
 
+  // 📄 Pagination
   const indexOfLast = currentPage * employeesPerPage;
   const indexOfFirst = indexOfLast - employeesPerPage;
   const currentEmployees = filteredEmployees.slice(
     indexOfFirst,
     indexOfLast
   );
-  const totalPages = Math.ceil(filteredEmployees.length / employeesPerPage);
+  const totalPages = Math.ceil(
+    filteredEmployees.length / employeesPerPage
+  );
 
   return (
     <div className="app-container">
+      {/* Sidebar */}
       <aside className="sidebar">
         <h2>EMS</h2>
         <nav>
-          <p>Dashboard</p>
-          <p>Employees</p>
-          <p onClick={handleLogout} className="logout">Logout</p>
+          <p
+            onClick={() => (window.location.href = "/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
+            Dashboard
+          </p>
+
+          <p
+            onClick={() => (window.location.href = "/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
+            Employees
+          </p>
+
+          <p
+            onClick={handleLogout}
+            className="logout"
+            style={{ cursor: "pointer" }}
+          >
+            Logout
+          </p>
         </nav>
       </aside>
 
+      {/* Main Content */}
       <main className="main-content">
         <div className="header">
           <h1>Employee Dashboard</h1>
         </div>
 
+        {/* Add Employee */}
         <div className="card">
           <h2>Add Employee</h2>
           <form onSubmit={handleCreate} className="form">
@@ -146,6 +181,7 @@ function Dashboard() {
           </form>
         </div>
 
+        {/* Employees Table */}
         <div className="card">
           <h2>Employees</h2>
 
@@ -170,7 +206,9 @@ function Dashboard() {
                 <tr key={emp._id}>
                   <td>{emp.fullName}</td>
                   <td>
-                    <span className="badge">{emp.department}</span>
+                    <span className="badge">
+                      {emp.department}
+                    </span>
                   </td>
                   <td style={{ textAlign: "right" }}>
                     <button
@@ -179,6 +217,7 @@ function Dashboard() {
                     >
                       Edit
                     </button>
+
                     <button
                       className="delete-btn"
                       onClick={() => handleDelete(emp._id)}
@@ -191,17 +230,26 @@ function Dashboard() {
             </tbody>
           </table>
 
+          {/* Pagination */}
           <div className="pagination">
             <button
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
+              onClick={() =>
+                setCurrentPage(currentPage - 1)
+              }
             >
               Prev
             </button>
-            <span>Page {currentPage} of {totalPages}</span>
+
+            <span>
+              Page {currentPage} of {totalPages || 1}
+            </span>
+
             <button
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
+              onClick={() =>
+                setCurrentPage(currentPage + 1)
+              }
             >
               Next
             </button>
@@ -214,19 +262,32 @@ function Dashboard() {
         <div className="modal-overlay">
           <div className="modal">
             <h2>Edit Employee</h2>
+
             <input
               type="text"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
             />
+
             <input
               type="text"
               value={editDepartment}
-              onChange={(e) => setEditDepartment(e.target.value)}
+              onChange={(e) =>
+                setEditDepartment(e.target.value)
+              }
             />
+
             <div className="modal-actions">
-              <button onClick={handleUpdate}>Save</button>
-              <button onClick={() => setEditingEmployee(null)}>Cancel</button>
+              <button onClick={handleUpdate}>
+                Save
+              </button>
+              <button
+                onClick={() =>
+                  setEditingEmployee(null)
+                }
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
