@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const employeeRoutes = require("./routes/employeeRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
+const authRoutes = require("./routes/authRoutes");
 
 connectDB();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/employees", employeeRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use(errorHandler);
 
