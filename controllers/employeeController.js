@@ -1,17 +1,17 @@
 const Employee = require("../models/employee");
 
 // CREATE
-exports.createEmployee = async (req, res, next) => {
+exports.createEmployee = async (req, res) => {
   try {
     const employee = await Employee.create(req.body);
     res.status(201).json(employee);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // GET ALL
-exports.getEmployees = async (req, res, next) => {
+exports.getEmployees = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -32,12 +32,12 @@ exports.getEmployees = async (req, res, next) => {
     });
 
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // GET BY ID
-exports.getEmployeeById = async (req, res, next) => {
+exports.getEmployeeById = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id);
 
@@ -47,12 +47,12 @@ exports.getEmployeeById = async (req, res, next) => {
 
     res.status(200).json(employee);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // UPDATE
-exports.updateEmployee = async (req, res, next) => {
+exports.updateEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByIdAndUpdate(
       req.params.id,
@@ -66,12 +66,12 @@ exports.updateEmployee = async (req, res, next) => {
 
     res.status(200).json(employee);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // DELETE
-exports.deleteEmployee = async (req, res, next) => {
+exports.deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByIdAndDelete(req.params.id);
 
@@ -81,12 +81,12 @@ exports.deleteEmployee = async (req, res, next) => {
 
     res.status(200).json({ message: "Employee deleted successfully" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
-// SEARCH (using find())
-exports.searchEmployee = async (req, res, next) => {
+// SEARCH
+exports.searchEmployee = async (req, res) => {
   try {
     const { name, department } = req.query;
 
@@ -100,12 +100,10 @@ exports.searchEmployee = async (req, res, next) => {
       query.department = department;
     }
 
-    const employees = await Employee.find(query); // find() used
+    const employees = await Employee.find(query);
 
     res.status(200).json(employees);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
-// 👉 MongoDB me findAll() hota hi nahi.
-// We use find() for reading all records.
