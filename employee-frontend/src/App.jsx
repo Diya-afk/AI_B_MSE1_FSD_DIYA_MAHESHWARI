@@ -1,28 +1,17 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/login";
-import Register from "./pages/register";
 import Dashboard from "./pages/dashboard";
-
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/" />;
-};
+import Employees from "./pages/employees"; // if you made one
+import Navbar from "./components/navbar";
 
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/employees" element={<Employees />} />
       </Routes>
     </BrowserRouter>
   );
