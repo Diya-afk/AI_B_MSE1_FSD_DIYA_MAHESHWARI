@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,7 +17,10 @@ function Login() {
       });
 
       localStorage.setItem("token", data.token);
-      window.location.href = "/dashboard";
+
+      // ✅ Use React Router navigation (NO page reload)
+      navigate("/dashboard");
+
     } catch (error) {
       alert("Invalid credentials ❌");
     }
