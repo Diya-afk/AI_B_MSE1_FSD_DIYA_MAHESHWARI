@@ -25,15 +25,20 @@ function Dashboard() {
   }, []);
 
   const fetchEmployees = async () => {
-    try {
-      const { data } = await api.get("/employees?limit=50", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setEmployees(data.employees || data);
-    } catch {
-      alert("Failed to fetch employees ❌");
-    }
-  };
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data } = await api.get("/employees?limit=50", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setEmployees(data.employees || data);
+  } catch (err) {
+    alert("Failed to fetch employees ❌");
+  }
+};
 
   const handleCreate = async (e) => {
     e.preventDefault();

@@ -17,10 +17,7 @@ function Login() {
       });
 
       localStorage.setItem("token", data.token);
-
-      // ✅ Use React Router navigation (NO page reload)
       navigate("/dashboard");
-
     } catch (error) {
       alert("Invalid credentials ❌");
     }
