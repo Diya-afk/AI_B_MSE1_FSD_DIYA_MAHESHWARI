@@ -1,29 +1,22 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import Navbar from "./components/navbar";
 
-function Layout() {
-  const location = useLocation();
+function App() {
   const token = localStorage.getItem("token");
 
-  const hideNavbar = location.pathname === "/" || !token;
-
-  return (
-    <>
-      {!hideNavbar && <Navbar />}
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </>
-  );
-}
-
-function App() {
   return (
     <BrowserRouter>
-      <Layout />
+      {token && <Navbar />}
+
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/" />}
+        />
+      </Routes>
     </BrowserRouter>
   );
 }
