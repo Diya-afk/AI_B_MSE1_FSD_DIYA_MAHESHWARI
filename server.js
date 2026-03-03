@@ -10,7 +10,15 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://ai-b-mse1-fsd-diya-maheshwari.onrender.com"
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/employees", employeeRoutes);
